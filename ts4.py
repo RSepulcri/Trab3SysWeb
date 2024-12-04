@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request
 import random
+import json
 
 app = Flask(__name__)
 
-matriz = []
+template = "grid6.html"
 
 #@app.route("/", methods=['POST'])
 #def renderpage():
@@ -22,7 +23,8 @@ def criaobstaculos(qtd,linha,coluna, matriz):
     return matriz
 
 
-def criamatriz(linha,coluna,matriz, qtd):
+def criamatriz(linha,coluna,qtd):
+    matriz = []
     for i in range (linha):
         linha_matriz = []
         for j in range (coluna):
@@ -40,11 +42,13 @@ def geragridpost():
         colunas = int(request.form["colunas"])
         obstaculos = int(request.form["obstaculos"])
 
-        matriz_resultante = criamatriz(linhas,colunas,matriz,obstaculos)
+        matriz_resultante = criamatriz(linhas,colunas,obstaculos)
 
-        return render_template("grid6.html", matriz=matriz_resultante)
+        return render_template(template, matriz=matriz_resultante)
     
-    return render_template("grid6.html")
+    return render_template(template)
+    
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

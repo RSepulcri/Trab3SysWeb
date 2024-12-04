@@ -64,37 +64,17 @@
   </form>
 
   {% if matriz %}
-    <div id="grid-container" data-matriz="{{ matriz | tojson }}"></div>
+    <h2>Grid Criado:</h2>
+    <table border:1>
+      {% for linhas in matriz %}
+        <tr>
+          {% for colunas in linhas %}
+            <td style="width: 20px; height: 20px; background-color: {{ 'black' if colunas == 'b' else 'white' }};"></td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
   {% endif %}
-  <script>
-    function createGrid(matriz){
-        const gridContainer = document.getElementById("grid-container");
-        const linhas = matriz.legth;
-        const colunas = matriz[0].length;
 
-        for(let i = 0; i < linhas; i++){
-            for(let j = 0; j < colunas; j++){
-                const cell = document.createElement("div");
-                cell.classList.add("grid-cell");
-
-                if(matriz[i][j] === "b"){
-                    cell.classList.add("obstacle");
-                }
-                else{
-                    cell.classList.add("empty");
-                }
-
-                gridContainer.appendChild(cell);
-            }
-        }
-    }
-
-    const matrizData = document.getElementById("grid-container").getAttribute("data-matriz");
-    if(matrizData){
-        const matriz = JSON.parse(matrizData);
-        createGrid(matriz);
-    }
-
-    </script>
 </body>
 </html>
