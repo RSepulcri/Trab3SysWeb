@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid de Obstáculos</title>
+  <style>
+    #grid-container{
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 20px);
+        grid-template-rows: repeat(auto-fill,20px);
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    .grid-cell {
+      width: 20px;
+      height: 20px;
+      background-color: #fff; /* Branco como padrão */
+      border: 1px solid #ddd; /* Contorno para destacar os quadrados */
+      cursor: pointer;
+    }
+    .grid-cell:hover {
+      opacity: 0.5;
+      background-color: #e0e0e0; /* Alteração de cor ao passar o mouse */
+    }
+    .obstacle{
+        background-color: black;
+    }
+    .empty{
+        background-color: white;
+    }
+    .origin{
+        background-color: darkgreen;
+    }
+    .destiny{
+        background-color: dodgerblue;
+    }
+    .route{
+        background-color: slategray;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dados Grid</h1>
+  
+  <!-- Formulário para o usuário inserir os dados -->
+  <form action="/" method="POST">
+    <label for="linhas">Linhas:</label>
+    <input type="number" id="linhas" name="linhas" required><br><br>
+    
+    <label for="colunas">Colunas:</label>
+    <input type="number" id="colunas" name="colunas" required><br><br>
+    
+    <label for="obstaculos">Obstáculos:</label>
+    <input type="number" id="obstaculos" name="obstaculos" required><br><br>
+    
+    <button type="submit">Confirmar</button>
+  </form>
+
+  {% if matriz %}
+    <div id="grid-container" data-matriz="{{ matriz | tojson }}"></div>
+  {% endif %}
+  <script>
+    function createGrid(matriz){
+        const gridContainer = document.getElementById("grid-container");
+        const linhas = matriz.legth;
+        const colunas = matriz[0].length;
+
+        for(let i = 0; i < linhas; i++){
+            for(let j = 0; j < colunas; j++){
+                const cell = document.createElement("div");
+                cell.classList.add("grid-cell");
+
+                if(matriz[i][j] === "b"){
+                    cell.classList.add("obstacle");
+                }
+                else{
+                    cell.classList.add("empty");
+                }
+
+                gridContainer.appendChild(cell);
+            }
+        }
+    }
+
+    const matrizData = document.getElementById("grid-container").getAttribute("data-matriz");
+    if(matrizData){
+        const matriz = JSON.parse(matrizData);
+        createGrid(matriz);
+    }
+
+    </script>
+</body>
+</html>

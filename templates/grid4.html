@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid Aleatório</title>
+  <style>
+    #grid-container {
+      display: grid;
+      grid-template-columns: repeat(30, 20px); /* 30 células por linha */
+      grid-template-rows: repeat(30, 20px);   /* 30 linhas */
+      gap: 1px;
+    }
+    .grid-cell {
+      width: 20px;
+      height: 20px;
+      background-color: white;
+      border: 1px solid #ccc;
+    }
+    .grid-cell:hover {
+      opacity: 0.5; /* diminui a opacidade */
+      background-color: antiquewhite;
+    }
+  </style>
+</head>
+<body>
+  <div id="grid-container"></div>
+
+  <script>
+    // Obtém o contêiner do grid
+    const gridContainer = document.getElementById("grid-container");
+
+    // Função para criar o grid
+    function createGrid(rows, cols) {
+      for (let i = 0; i < rows * cols; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("grid-cell");
+        
+        // Adiciona eventos de clique nos pixels
+        cell.addEventListener("click", (event) => {
+          const currentColor = window.getComputedStyle(cell).backgroundColor;
+          
+          // Clique esquerdo: Torna o pixel verde
+          if (currentColor === "rgb(255, 255, 255)") { // Branco (rgb(255, 255, 255))
+            cell.style.backgroundColor = "green";
+          }
+        });
+
+        cell.addEventListener("contextmenu", (event) => {
+          event.preventDefault(); // Evita o menu padrão do clique direito
+          const currentColor = window.getComputedStyle(cell).backgroundColor;
+          
+          // Clique direito: Torna o pixel vermelho
+          if (currentColor === "rgb(255, 255, 255)") { // Branco (rgb(255, 255, 255))
+            cell.style.backgroundColor = "red";
+          }
+        });
+
+        gridContainer.appendChild(cell);
+      }
+    }
+
+    // Função para criar 20 pixels aleatórios na cor preta
+    function createRandomBlackPixels(count) {
+      const cells = document.querySelectorAll(".grid-cell");
+      const totalCells = cells.length;
+
+      // Certifique-se de não gerar mais pixels do que o grid tem
+      count = Math.min(count, totalCells);
+
+      // Gera índices aleatórios únicos
+      const indices = new Set();
+      while (indices.size < count) {
+        const randomIndex = Math.floor(Math.random() * totalCells);
+        indices.add(randomIndex);
+      }
+
+      // Aplica a cor preta aos índices selecionados
+      indices.forEach(index => {
+        cells[index].style.backgroundColor = "black";
+      });
+    }
+
+    // Gera o grid 30x30
+    createGrid(30, 30);
+
+    // Gera 20 pixels pretos aleatórios
+    createRandomBlackPixels(20);
+  </script>
+</body>
+</html>

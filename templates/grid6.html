@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid de Obstáculos</title>
+  <style>
+    #grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 20px);
+      grid-template-rows: repeat(auto-fill, 20px);
+    }
+    .grid-cell {
+      width: 20px;
+      height: 20px;
+    }
+    .obstacle {
+      background-color: black;
+    }
+    .empty {
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dados Grid</h1>
+  
+  <!-- Formulário para o usuário inserir os dados -->
+  <form action="/" method="POST">
+    <label for="linhas">Linhas:</label>
+    <input type="number" id="linhas" name="linhas" required><br><br>
+    
+    <label for="colunas">Colunas:</label>
+    <input type="number" id="colunas" name="colunas" required><br><br>
+    
+    <label for="obstaculos">Obstáculos:</label>
+    <input type="number" id="obstaculos" name="obstaculos" required><br><br>
+    
+    <button type="submit">Confirmar</button>
+  </form>
+
+  {% if matriz %}
+    <div id="grid-container" data-matriz="{{ matriz | tojson }}"></div>
+  {% endif %}
+
+  <script>
+    // Função para criar o grid a partir da matriz passada
+    function createGrid(matriz) {
+      const gridContainer = document.getElementById("grid-container");
+      const linhas = matriz.length;
+      const colunas = matriz[0].length;
+
+      // Cria as células do grid com base na matriz
+      for (let i = 0; i < linhas; i++) {
+        for (let j = 0; j < colunas; j++) {
+          const cell = document.createElement("div");
+          cell.classList.add("grid-cell");
+          
+          // Define a cor da célula dependendo se é obstáculo ou vazio
+          if (matriz[i][j] === "b") {
+            cell.classList.add("obstacle");
+          } else {
+            cell.classList.add("empty");
+          }
+
+          gridContainer.appendChild(cell);
+        }
+      }
+    }
+
+    // Se a matriz foi gerada no Flask, cria o grid
+    const matrizData = document.getElementById("grid-container").getAttribute("data-matriz");
+    if (matrizData) {
+      const matriz = JSON.parse(matrizData); // Converte a matriz do Flask para um objeto JavaScript
+      createGrid(matriz);
+    }
+  </script>
+</body>
+</html>
