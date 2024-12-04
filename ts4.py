@@ -6,6 +6,8 @@ app = Flask(__name__)
 
 template = "grid6.html"
 
+matriz = []
+
 #@app.route("/", methods=['POST'])
 #def renderpage():
 #    return render_template("grid5.html")
@@ -23,8 +25,8 @@ def criaobstaculos(qtd,linha,coluna, matriz):
     return matriz
 
 
-def criamatriz(linha,coluna,qtd):
-    matriz = []
+def criamatriz(linha,coluna,qtd,matriz):
+    matriz.clear()
     for i in range (linha):
         linha_matriz = []
         for j in range (coluna):
@@ -37,16 +39,17 @@ def criamatriz(linha,coluna,qtd):
 
 @app.route("/", methods=["GET","POST"])
 def geragridpost():
+    global matriz
     if request.method == "POST":
         linhas = int(request.form["linhas"])
         colunas = int(request.form["colunas"])
         obstaculos = int(request.form["obstaculos"])
 
-        matriz_resultante = criamatriz(linhas,colunas,obstaculos)
+        criamatriz(linhas,colunas,obstaculos,matriz)
 
-        return render_template(template, matriz=matriz_resultante)
+        #return render_template(template, matriz)
     
-    return render_template(template)
+    return render_template(template,matriz=matriz)
     
     
 
