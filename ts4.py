@@ -40,16 +40,28 @@ def criamatriz(linha,coluna,qtd,matriz):
 @app.route("/", methods=["GET","POST"])
 def geragridpost():
     global matriz
+
+
     if request.method == "POST":
         linhas = int(request.form["linhas"])
         colunas = int(request.form["colunas"])
         obstaculos = int(request.form["obstaculos"])
-
-        criamatriz(linhas,colunas,obstaculos,matriz)
+        #if (!matriz)? pq não if matriz is None
+        if not matriz:
+            criamatriz(linhas,colunas,obstaculos,matriz)
 
         #return render_template(template, matriz)
     
     return render_template(template,matriz=matriz)
+
+@app.route('/delete', methods=['POST'])
+def apagarGridAtual():
+    global matriz
+    #Se grid n for None(null), ou seja, se existir, voltamos ela a uma lista vazia
+    #matriz is not None x not matriz ?
+    if matriz is not None:
+        matriz = []
+    return render_template(template, matriz=matriz)
     
     
 

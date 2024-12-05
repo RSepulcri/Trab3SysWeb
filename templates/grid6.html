@@ -46,6 +46,10 @@
     <button type="submit">Confirmar</button>
   </form>
 
+  <form action="/delete" method="POST">
+    <button type="submit">Deletar grid atual</button>
+  </form>
+
   <!-- Div que irá conter o grid gerado -->
   <div id="grid-container">
     {% if matriz %}
@@ -74,6 +78,14 @@
             gridContainer.appendChild(cellDiv);
           });
         });
+
+        
+        // //Evento de children do grid sobe na bubbling phase pro eventListener do elemento pai, possibilitando identificar ele
+        // gridContainer.addEventListener('click', (e) => {
+        //   //Identificando ṕosiçAO no array
+        //   console.log(Array.from(gridContainer.children).indexOf(e.srcElement))
+        // })
+        
       </script>
     {% endif %}
   </div>
