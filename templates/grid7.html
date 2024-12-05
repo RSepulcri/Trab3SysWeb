@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerar Grid de Obstáculos</title>
+  <style>
+    #grid-container {
+      display: grid;
+      margin-top: 20px;
+    }
+    .grid-cell {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #ccc;
+    }
+    .obstacle {
+      background-color: black;
+    }
+    .obstacle:hover {
+      opacity: 0.5;
+    }
+    .empty {
+      background-color: white;
+    }
+    .empty:hover {
+      opacity: 0.5;
+      background-color: antiquewhite;
+      cursor: pointer;
+    }
+    .green {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gerar Grid de Obstáculos</h1>
+  
+  <!-- Formulário para inserir os dados -->
+  <form action="/" method="POST">
+    <label for="linhas">Linhas:</label>
+    <input type="number" id="linhas" name="linhas" required min="1"><br><br>
+
+    <label for="colunas">Colunas:</label>
+    <input type="number" id="colunas" name="colunas" required min="1"><br><br>
+
+    <label for="obstaculos">Obstáculos (quantidade):</label>
+    <input type="number" id="obstaculos" name="obstaculos" required min="0"><br><br>
+
+    <button type="submit">Confirmar</button>
+  </form>
+
+  <!-- Div que irá conter o grid gerado -->
+  <div id="grid-container">
+    {% if matriz %}
+      <script>
+        const matriz = {{ matriz | tojson }};
+        
+        // Função para criar o grid a partir da matriz
+        const gridContainer = document.getElementById('grid-container');
+        const linhas = matriz.length;
+        const colunas = matriz[0].length;
+
+        // Define o estilo do grid com base nas dimensões
+        gridContainer.style.gridTemplateColumns = `repeat(${colunas}, 20px)`;
+        gridContainer.style.gridTemplateRows = `repeat(${linhas}, 20px)`;
+
+        // Função para enviar coordenadas ao backend
+        async function sendCoordinates(row, col) {
+          try {
+            const response = await fetch('/update-cell', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ row, col })
+            });
+            if (response.ok) {
+              // Atualiza visualmente a célula para verde
+              const cellIndex = row * colunas + col;
+              const cellDiv = gridContainer.children[cellIndex];
+              cellDiv.classList.remove('empty');
+              cellDiv.classList.add('green');
+            }
+          } catch (error) {
+            console.error('Erro ao enviar as coordenadas:', error);
+          }
+        }
+
+        // Cria as células do grid
+        matriz.forEach((row, rowIndex) => {
+          row.forEach((cell, colIndex) => {
+            const cellDiv = document.createElement('div');
+            cellDiv.classList.add('grid-cell');
+            if (cell === 'b') {
+              cellDiv.classList.add('obstacle');
+            } else {
+              cellDiv.classList.add('empty');
+              // Adiciona evento de clique nas células brancas
+              cellDiv.addEventListener('click', () => {
+                sendCoordinates(rowIndex, colIndex);
+              });
+            }
+            gridContainer.appendChild(cellDiv);
+          });
+        });
+      </script>
+    {% endif %}
+  </div>
+</body>
+</html>
