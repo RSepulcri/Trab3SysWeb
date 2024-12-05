@@ -8,6 +8,8 @@ app = Flask(__name__)
 template = "grid7.html"
 
 matriz = []
+origem = ()
+destino = ()
 
 #@app.route("/", methods=['POST'])
 #def renderpage():
