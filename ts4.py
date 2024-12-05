@@ -74,6 +74,11 @@ def a_star(matriz,origem,destino):
                 caminho.append(atual)
                 atual = rotas_realizadas[atual]
             caminho.append(origem)
+
+            for x , y in caminho:
+                if matriz[x][y] != "b":
+                    matriz[x][y] = "c"
+                    
             return caminho[::-1] #retorna o caminho na ordem correta(invertida)
         
         #verificar os vizinhos
