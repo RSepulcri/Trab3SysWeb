@@ -27,6 +27,18 @@
         opacity: 0.5;
         background-color: antiquewhite;
     }
+    .inicio {
+      background-color: green;
+    }
+    .destino {
+      background-color: rgb(166, 33, 33);
+    }
+    .destino:hover,
+    .inicio:hover {
+      opacity: 0.5;
+    }
+    
+
   </style>
 </head>
 <body>
@@ -58,33 +70,68 @@
         
         // Função para criar o grid a partir da matriz
         const gridContainer = document.getElementById('grid-container');
-        const linhas = matriz.length;
-        const colunas = matriz[0].length;
+        
+        // Função para desenhar o grid
+        function desenhaGrid(matriz) {
+            // Remove os elementos existentes apenas (innerHTML = '' dá um bug com o index do destino)
+            const elementosExistentes = gridContainer.querySelectorAll('.grid-cell');
+            elementosExistentes.forEach(cell => cell.remove());
 
-        // Define o estilo do grid com base nas dimensões
-        gridContainer.style.gridTemplateColumns = `repeat(${colunas}, 20px)`;
-        gridContainer.style.gridTemplateRows = `repeat(${linhas}, 20px)`;
+            
+            const linhas = matriz.length;
+            const colunas = matriz[0].length;
 
-        // Cria as células do grid
-        matriz.forEach(row => {
-          row.forEach(cell => {
-            const cellDiv = document.createElement('div');
-            cellDiv.classList.add('grid-cell');
-            if (cell === 'b') {
-              cellDiv.classList.add('obstacle');
-            } else {
-              cellDiv.classList.add('empty');
-            }
-            gridContainer.appendChild(cellDiv);
-          });
-        });
+            // Define o estilo do grid com base nas dimensões
+            gridContainer.style.gridTemplateColumns = `repeat(${colunas}, 20px)`;
+            gridContainer.style.gridTemplateRows = `repeat(${linhas}, 20px)`;
+
+            // Cria as células do grid
+            matriz.forEach(row => {
+                row.forEach(cell => {
+                    const cellDiv = document.createElement('div');
+                    cellDiv.classList.add('grid-cell');
+                    if (cell === 'b') {
+                        cellDiv.classList.add('obstacle');
+                    } else if (cell === 'i') {
+                        cellDiv.classList.add('inicio');
+                    } else if (cell === 'd') {
+                        cellDiv.classList.add('destino');
+                    } else {
+                        cellDiv.classList.add('empty');
+                    }
+                    gridContainer.appendChild(cellDiv);
+                });
+            });
+        }
+
+        // Desenha o grid inicialmente
+        desenhaGrid(matriz);
 
         
-        // //Evento de children do grid sobe na bubbling phase pro eventListener do elemento pai, possibilitando identificar ele
-        // gridContainer.addEventListener('click', (e) => {
-        //   //Identificando ṕosiçAO no array
-        //   console.log(Array.from(gridContainer.children).indexOf(e.srcElement))
-        // })
+        //Evento de children do grid sobe na bubbling phase pro eventListener do elemento pai, possibilitando identificar ele
+        gridContainer.addEventListener('click', async (e) => {
+          const clickedElement = e.srcElement || e.target;
+          //parentNode.children é HTMLCollection, transformar em Array
+          const clickedElementPosition = Array.from(gridContainer.children).indexOf(clickedElement)
+          console.log(`Posição ${clickedElementPosition}`)
+          console.log(gridContainer)
+
+          //Envia posição clicado pro backend
+          const res = await fetch('/enviaPos', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({position: clickedElementPosition})
+          })
+
+          
+          const data = await res.json()
+          
+          if (res.ok) {
+            console.log(data)
+            desenhaGrid(data.matrizAtual)
+            //location.reload()
+          }
+        })
         
       </script>
     {% endif %}
