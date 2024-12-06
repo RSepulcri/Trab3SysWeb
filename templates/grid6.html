@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerar Grid de Obstáculos</title>
+  <style>
+    #grid-container {
+      display: grid;
+      margin-top: 20px;
+    }
+    .grid-cell {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #ccc;
+    }
+    .obstacle {
+      background-color: black;
+    }
+    .obstacle:hover{
+        opacity: 0.5;
+    }
+    .empty {
+      background-color: white;
+    }
+    .empty:hover{
+        opacity: 0.5;
+        background-color: antiquewhite;
+    }
+    .inicio {
+      background-color: green;
+    }
+    .destino {
+      background-color: rgb(166, 33, 33);
+    }
+    .caminho {
+      background-color: #5f9ea0;
+    }
+    .destino:hover,
+    .inicio:hover,
+    .caminho:hover {
+      opacity: 0.5;
+    }
+    
+
+  </style>
+</head>
+<body>
+  <h1>Gerar Grid de Obstáculos</h1>
+  
+  <!-- Formulário para inserir os dados -->
+  <form action="/" method="POST">
+    <label for="linhas">Linhas:</label>
+    <input type="number" id="linhas" name="linhas" required min="1"><br><br>
+
+    <label for="colunas">Colunas:</label>
+    <input type="number" id="colunas" name="colunas" required min="1"><br><br>
+
+    <label for="obstaculos">Obstáculos (quantidade):</label>
+    <input type="number" id="obstaculos" name="obstaculos" required min="0"><br><br>
+
+    <button type="submit">Confirmar</button>
+  </form>
+
+  <form action="/delete" method="POST">
+    <button type="submit">Deletar grid atual</button>
+  </form>
+
+  <!-- Div que irá conter o grid gerado -->
+  <div id="grid-container">
+    {% if matriz %}
+      <script>
+        const matriz = {{ matriz | tojson }};
+        
+        // Função para criar o grid a partir da matriz
+        const gridContainer = document.getElementById('grid-container');
+        
+        // Função para desenhar o grid
+        function desenhaGrid(matriz) {
+            // Remove os elementos existentes apenas (innerHTML = '' dá um bug com o index do destino)
+            const elementosExistentes = gridContainer.querySelectorAll('.grid-cell');
+            elementosExistentes.forEach(cell => cell.remove());
+
+            
+            const linhas = matriz.length;
+            const colunas = matriz[0].length;
+
+            // Define o estilo do grid com base nas dimensões
+            gridContainer.style.gridTemplateColumns = `repeat(${colunas}, 20px)`;
+            gridContainer.style.gridTemplateRows = `repeat(${linhas}, 20px)`;
+
+            // Cria as células do grid
+            matriz.forEach(row => {
+                row.forEach(cell => {
+                    const cellDiv = document.createElement('div');
+                    cellDiv.classList.add('grid-cell');
+                    if (cell === 'b') {
+                        cellDiv.classList.add('obstacle');
+                    } else if (cell === 'i') {
+                        cellDiv.classList.add('inicio');
+                    } else if (cell === 'd') {
+                        cellDiv.classList.add('destino');
+                    } else if (cell === 'c') {
+                        cellDiv.classList.add('caminho')
+                    } else {
+                        cellDiv.classList.add('empty');
+                    }
+                    gridContainer.appendChild(cellDiv);
+                });
+            });
+        }
+
+        // Desenha o grid inicialmente
+        desenhaGrid(matriz);
+
+        
+        //Evento de children do grid sobe na bubbling phase pro eventListener do elemento pai, possibilitando identificar ele
+        gridContainer.addEventListener('click', async (e) => {
+          const clickedElement = e.srcElement || e.target;
+          //parentNode.children é HTMLCollection, transformar em Array
+          const clickedElementPosition = Array.from(gridContainer.children).indexOf(clickedElement)
+          console.log(`Posição ${clickedElementPosition}`)
+          console.log(gridContainer)
+
+          //Envia posição clicado pro backend
+          const res = await fetch('/enviaPos', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({position: clickedElementPosition})
+          })
+
+          
+          const data = await res.json()
+          
+          if (res.ok) {
+            console.log(data)
+            desenhaGrid(data.matrizAtual)
+            //location.reload()
+          }
+        })
+        
+      </script>
+    {% endif %}
+  </div>
+</body>
+</html>

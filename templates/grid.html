@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid 30x30</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    #grid-container {
+      display: grid;
+      grid-template-columns: repeat(30, 20px); /* 30 colunas com quadrados de 20px */
+      grid-template-rows: repeat(30, 20px);    /* 30 linhas com quadrados de 20px */
+      gap: 1px; /* Espaçamento entre os quadrados */
+      background-color: #ccc;
+    }
+    .grid-cell {
+      width: 20px;
+      height: 20px;
+      background-color: #fff; /* Branco como padrão */
+      border: 1px solid #ddd; /* Contorno para destacar os quadrados */
+      cursor: pointer;
+    }
+    .grid-cell:hover {
+      background-color: #e0e0e0; /* Alteração de cor ao passar o mouse */
+    }
+  </style>
+</head>
+<body>
+  <div id="grid-container"></div>
+
+  <script>
+    // Obtém o contêiner do grid
+    const gridContainer = document.getElementById("grid-container");
+
+    // Função para criar o grid
+    function createGrid(rows, cols) {
+      for (let i = 0; i < rows * cols; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("grid-cell");
+        gridContainer.appendChild(cell);
+      }
+    }
+
+    // Gera o grid 30x30
+    createGrid(30, 30);
+  </script>
+</body>
+</html>
