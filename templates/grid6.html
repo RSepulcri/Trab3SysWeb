@@ -33,8 +33,12 @@
     .destino {
       background-color: rgb(166, 33, 33);
     }
+    .caminho {
+      background-color: #5f9ea0;
+    }
     .destino:hover,
-    .inicio:hover {
+    .inicio:hover,
+    .caminho:hover {
       opacity: 0.5;
     }
     
@@ -96,6 +100,8 @@
                         cellDiv.classList.add('inicio');
                     } else if (cell === 'd') {
                         cellDiv.classList.add('destino');
+                    } else if (cell === 'c') {
+                        cellDiv.classList.add('caminho')
                     } else {
                         cellDiv.classList.add('empty');
                     }
